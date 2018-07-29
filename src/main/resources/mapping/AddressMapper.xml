@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yidong.mapper.AddressMapper" >
+  <resultMap id="BaseResultMap" type="Address" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="userName" property="userName" jdbcType="VARCHAR" />
+    <result column="userPhone" property="userPhone" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="userId" property="userId" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="INTEGER"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, userName, userPhone, address, userId,state
+  </sql>
+  <select id="getUserId"  parameterType="java.lang.String" resultType="java.lang.String">
+    SELECT ID FROM tb_user where account=#{account}
+  </select>
+  <select id="getAccount" parameterType="java.lang.String" resultType="java.lang.String">
+    SELECT account FROM tb_user where id=#{userId}
+  </select>
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from tb_address
+    where userId IN (SELECT id as userId from tb_user where account=#{account})
+  </select>
+<select id="selectOneByUserId" parameterType="java.lang.String" resultType="java.lang.String">
+  SELECT max(id) from tb_address where userId=#{userId}
+</select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_address
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectDefaultAddress" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from tb_address
+    where state = 0 and userId IN (SELECT id as userId from tb_user where account=#{account})
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tb_address
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="Address" >
+    insert into tb_address (id, userName, userPhone,
+      address, userId,state)
+    values (#{id,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{userPhone,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR},#{state,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="Address" >
+    insert into tb_address
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userName != null" >
+        userName,
+      </if>
+      <if test="userPhone != null" >
+        userPhone,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="userId != null" >
+        userId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userPhone != null" >
+        #{userPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="state!=null">
+        #{state,jdbcType=INTEGER}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="Address" >
+    update tb_address
+    <set >
+      <if test="userName != null" >
+        userName = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userPhone != null" >
+        userPhone = #{userPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="Address" >
+    update tb_address
+    set userName = #{userName,jdbcType=VARCHAR},
+      userPhone = #{userPhone,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateState" parameterType="java.lang.String">
+    UPDATE tb_address
+    set state = 1
+    where userId IN (SELECT id as userId from tb_user where account=#{account}) and state=0
+  </update>
+  <update id="setState" parameterType="java.lang.String">
+    UPDATE tb_address
+    set state=0
+    WHERE id=#{id,jdbcType=VARCHAR}
+  </update>
+
+
+
+</mapper>

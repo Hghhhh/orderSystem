@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yidong.mapper.OrderFormMapper" >
+  <!-- 连表查询-->
+  <resultMap id="BaseResultMap" type="OrderForm" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="note" property="note" jdbcType="VARCHAR" />
+    <result column="sum" property="sum" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="createTime" property="createTime" jdbcType="VARCHAR" />
+    <result column="userId" property="userId" jdbcType="VARCHAR" />
+    <association property="address" column="addressId" select="getAddress">
+    </association>
+    <collection property="goodsList" javaType="ArrayList" ofType="ShoppingCarToGoods"
+                column="id" select="selectShoppingCarToGoods"></collection>
+  </resultMap>
+  <!-- 返回ShoppingCarToGoods-->
+  <resultMap id="ShoppingCarToGoodsMap" type="ShoppingCarToGoods" >
+    <id column="id" property="id" jdbcType="VARCHAR"></id>
+    <result column="num" property="buyNum" jdbcType="INTEGER" />
+    <association property="goods" column="goodsId" select="getGoods">
+    </association>
+    <association property="price" column="priceId" select="getPrice">
+    </association>
+  </resultMap>
+  <resultMap id="orderFormToGoodsMap" type="map">
+    <result column="goodsId" property="goodsId" jdbcType="VARCHAR"></result>
+    <result column="priceId" property="priceId" jdbcType="VARCHAR"/>
+    <result column="num" property="num" jdbcType="INTEGER"/>
+  </resultMap>
+  <select id="getPrice" resultType="Price" parameterType="java.lang.String" >
+    select id,price,unit,num,weight from tb_price where id=#{priceId,jdbcType=VARCHAR}
+  </select>
+  <select id="getGoods" resultType="ShoppingCarGoods" parameterType="java.lang.String" >
+    select
+    g.id,g.name,g.brand,g.factory,g.storage,g.shelfLife,g.remarks,g.state,p.picture
+    from tb_goods as g  join (SELECT goodsId,max(address) as picture from tb_goods_picture group by goodsId) as p
+    on g.id = #{goodsId,jdbcType=VARCHAR} and p.goodsId=g.id
+  </select>
+  <select id="getAddress" resultType="Address">
+    select * from tb_address where id=#{addressId,jdbcType=VARCHAR}
+  </select>
+  <select id="getUserId" resultType="java.lang.String">
+    select id from tb_user where account=#{account,jdbcType=VARCHAR}
+  </select>
+  <select id="selectShoppingCarToGoods" resultMap="ShoppingCarToGoodsMap" parameterType="java.lang.String">
+    SELECT
+    id,goodsId,priceId,num
+    from tb_order_form_goods
+    where formId=#{id}
+  </select>
+  <sql id="Base_Column_List" >
+    id, addressId, note, sum, state, createTime, userId
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_order_form
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByUerId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from tb_order_form
+    where userId IN (SELECT id as userId from tb_user where account=#{account}) ORDER BY createTime desc
+  </select>
+  <select id="selectShoppingCarGoods" parameterType="java.lang.String" resultMap="orderFormToGoodsMap">
+    SELECT goodsId,priceId,num from tb_shoppingcar_goods
+    where id = #{shoppingCarGoodsId}
+  </select>
+  <insert id="insert" parameterType="map" >
+    insert into tb_order_form (id, addressId, note,
+      sum, state, createTime, userId,cityId)
+    values (#{id,jdbcType=VARCHAR}, #{addressId,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR}, 
+      #{sum,jdbcType=FLOAT}, #{state,jdbcType=INTEGER}, CURDATE(), #{userId,jdbcType=VARCHAR},#{cityId,jdbcType=VARCHAR})
+  </insert>
+<!--  <insert id="insertOrderFormGoods" parameterType="map" >
+    insert into tb_order_form_goods (id, goodsId,num,priceId,formId)
+    values (#{id,jdbcType=VARCHAR}, #{goodsId,jdbcType=VARCHAR},
+    #{num,jdbcType=INTEGER}, #{priceId,jdbcType=VARCHAR},#{formId,jdbcType=VARCHAR})
+  </insert>-->
+  <update id="update" parameterType="map" >
+    update tb_order_form
+    set
+      state = #{state,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <delete id="deleteShoppingCarGoods" parameterType="java.lang.String">
+    DELETE FROM tb_shoppingcar_goods where id=#{id,jdbcType=VARCHAR}
+  </delete>
+  <update id="updateGoodsNum" parameterType="map">
+    UPDATE tb_price SET
+    num = #{num,jdbcType=INTEGER}
+    where id=#{id,jdbcType=VARCHAR}
+  </update>
+  <insert id="insertOrderFormGoods" parameterType="java.util.List">
+    insert into tb_order_form_goods
+    (id, goodsId, num, priceId,formId)
+    values
+    <foreach collection ="list" item="shoppingCarGoodsForUpdate" index= "index" separator =",">
+      (
+      #{shoppingCarGoodsForUpdate.id}, #{shoppingCarGoodsForUpdate.goodsId},
+      #{shoppingCarGoodsForUpdate.buyNum},
+      #{shoppingCarGoodsForUpdate.priceId},
+      #{shoppingCarGoodsForUpdate.carId}
+      )
+    </foreach >
+  </insert>
+</mapper>

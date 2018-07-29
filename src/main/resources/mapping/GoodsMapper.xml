@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yidong.mapper.GoodsMapper" >
+  <resultMap id="BaseResultMap" type="Goods" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="brand" property="brand" jdbcType="VARCHAR" />
+    <result column="factory" property="factory" jdbcType="VARCHAR" />
+    <result column="storage" property="storage" jdbcType="VARCHAR" />
+    <result column="shelfLife" property="shelfLife" jdbcType="VARCHAR" />
+    <result column="remarks" property="remarks" jdbcType="VARCHAR" />
+    <result column="cityId" property="cityId" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <collection property="price" javaType="ArrayList" ofType="Price"
+                column="id" select="getPrice"></collection>
+    <collection property="pictures" javaType="ArrayList" ofType="java.lang.String"
+                column="id" select="getPictureAddress"></collection>
+  </resultMap>
+  <select id="getPrice" resultType="Price">
+    select id,price,unit,num,weight from tb_price where goodsId=#{id}
+  </select>
+  <select id="getPictureAddress" resultType="java.lang.String">
+    select address from tb_goods_picture where goodsId=#{id}
+  </select>
+  <sql id="Base_Column_List" >
+    id, name, cityId, state,brand,factory,storage,shelfLife,remarks
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_goods
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByName" resultMap="BaseResultMap" parameterType="map" >
+    select
+    <include refid="Base_Column_List" />
+    from tb_goods
+    where name like '%${name}%' and state != 0
+    <if test="cityId != null">
+      and cityId = #{cityId,jdbcType=VARCHAR}
+    </if>
+  </select>
+  <select id="selectByState" resultMap="BaseResultMap" parameterType="map" >
+    select
+    <include refid="Base_Column_List" />
+    from tb_goods
+    where state = #{state,jdbcType=INTEGER}
+    <if test="cityId != null">
+      and cityId = #{cityId,jdbcType=VARCHAR}
+    </if>
+    limit #{num,jdbcType=INTEGER},6
+  </select>
+  <select id="selectByType" resultMap="BaseResultMap" parameterType="java.lang.String">
+    SELECT
+    <include refid="Base_Column_List" />
+    from tb_goods
+    where id in (SELECT goodsId  from tb_goods_type as id where typeId = #{typeId})
+    <if test="cityId != null">
+      and cityId = #{cityId,jdbcType=VARCHAR}
+    </if>
+    limit #{num,jdbcType=INTEGER},6
+  </select>
+</mapper>

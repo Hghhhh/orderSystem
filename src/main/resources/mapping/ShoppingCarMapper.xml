@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yidong.mapper.ShoppingCarMapper" >
+  <resultMap id="ShoppingCarToGoodsMap" type="ShoppingCarToGoods" >
+    <id column="id" property="id" jdbcType="VARCHAR"></id>
+    <result column="num" property="buyNum" jdbcType="INTEGER" />
+     <result column="isCheck" property="isCheck" jdbcType="INTEGER"/>
+    <association property="goods" column="goodsId" select="getGoods">
+    </association>
+    <association property="price" column="priceId" select="getPrice">
+    </association>
+  </resultMap>
+    <resultMap id="PriceBuyNum" type="map">
+        <result column="num" property="num" jdbcType="INTEGER"/>
+        <result column="priceId" property="priceId" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="getPrice" resultType="Price">
+        select id,price,unit,num,weight from tb_price where id=#{priceId,jdbcType=VARCHAR}
+    </select>
+    <select id="getGoods" resultType="ShoppingCarGoods" parameterType="java.lang.String" >
+        select
+        g.id,g.name,g.brand,g.factory,g.storage,g.shelfLife,g.remarks,g.state,p.picture
+        from tb_goods as g join (SELECT goodsId,max(address) as picture from tb_goods_picture group by goodsId) as p
+        on g.id = #{goodsId,jdbcType=VARCHAR} and p.goodsId=g.id
+    </select>
+ <!-- <resultMap id="ShoppingCarGoodsMap" type="ShoppingCarGoods" >
+      <id column="gid" property="gid" jdbcType="VARCHAR" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="detail" property="detail" jdbcType="VARCHAR" />
+      <result column="state" property="state" jdbcType="INTEGER" />
+      <result column="num" property="num" jdbcType="INTEGER" />
+      <result column="price" property="price" jdbcType="FLOAT" />
+      <result column="unit" property="unit" jdbcType="VARCHAR" />
+      <collection property="pictures" javaType="ArrayList" ofType="java.lang.String"
+                  column="gid" select="getPictureAddress"></collection>
+  </resultMap>-->
+
+  <select id="getPictureAddress" resultType="java.lang.String">
+    select address from tb_goods_picture where goodsId=#{gid}
+  </select>
+  <!--<select id="getGoodsList" resultMap="ShoppingCarGoodsMap" parameterType="ShoppingCarToGoods" >
+    select g.id gid,g.name,g.detail,g.state,p.id pid,p.unit,p.price,p.num from tb_goods as g left join tb_price as p ON g.id=#{goodsId} and p.id = #{priceId}
+  </select>-->
+  <sql id="Base_Column_List" >
+    id
+  </sql>
+  <select id="selectByUserId" resultType="java.lang.String" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_shoppingcar
+    where userId IN (SELECT id as userId from tb_user where account=#{account})
+  </select>
+  <select id="selectShoppingCarToGoods" resultMap="ShoppingCarToGoodsMap" parameterType="java.lang.String">
+    SELECT
+    id,goodsId,priceId,num,isCheck
+    from tb_shoppingcar_goods
+    where carId=#{carId}
+  </select>
+
+    <select id="selectGoodsInCar" resultType="map" parameterType="java.lang.String">
+    SELECT  goodsId,priceId,num from tb_shoppingcar_goods where id=#{id}
+</select>
+    <delete id="deleteGoodsInOrderForm"  parameterType="ShoppingCarGoodsForUpdate">
+       DELETE FROM tb_shoppingcar_goods where goodsId=#{goodsId} and priceId=#{priceId} and carId=#{carId}
+    </delete>
+    <select id="selectWhenAddGoodsToCar" resultType="java.lang.String" parameterType="map">
+        SELECT id from tb_shoppingcar_goods where carId=#{carId} and priceId=#{priceId} and goodsId=#{goodsId}
+    </select>
+    <select id="getPriceBuyNum" resultMap="PriceBuyNum" parameterType="map">
+        SELECT num,priceId from tb_shoppingcar_goods
+        WHERE goodsId=#{goodsId} and carId=#{carId}
+    </select>
+    <insert id="addGoodsToCar" parameterType="map">
+        INSERT
+        into tb_shoppingcar_goods (id,goodsId,num,priceId,carId)
+        VALUES (#{id},#{goodsId},#{num},#{priceId},#{carId})
+    </insert>
+    <delete id="deleteGoodsInCar" parameterType="java.lang.String">
+        DELETE FROM tb_shoppingcar_goods
+        where id=#{id}
+    </delete>
+
+    <!--批量添加数据库购物车中商品-->
+    <insert id="update" parameterType="java.util.List">
+        insert into tb_shoppingcar_goods
+                (id, goodsId, num, priceId,carId,isCheck)
+              values
+                   <foreach collection ="list" item="shoppingCarGoodsForUpdate" index= "index" separator =",">
+                      (
+                        #{shoppingCarGoodsForUpdate.id}, #{shoppingCarGoodsForUpdate.goodsId},
+                       #{shoppingCarGoodsForUpdate.buyNum},
+                      #{shoppingCarGoodsForUpdate.priceId},
+                     #{shoppingCarGoodsForUpdate.carId},
+                       <choose>
+                           <when test="shoppingCarGoodsForUpdate.isCheck == true">
+                               1
+                           </when>
+                           <otherwise>
+                               0
+                           </otherwise>
+                       </choose>
+                       )
+                    </foreach >
+    </insert>
+    <delete id="clearShoppingCarGoods" parameterType="java.lang.String">
+        DELETE FROM tb_shoppingcar_goods WHERE carId=#{carId}
+    </delete>
+</mapper>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yidong.mapper.BannerMapper" >
+  <select id="selectByState" resultType="string" parameterType="java.lang.String">
+    SELECT
+    address
+    from tb_banner
+    where state = 1
+    <if test="_parameter != null">
+    and cityId=#{cityId,jdbcType=VARCHAR}
+    </if>
+  </select>
+
+</mapper>
