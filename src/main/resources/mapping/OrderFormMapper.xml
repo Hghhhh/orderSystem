@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.yidong.mapper.OrderFormMapper" >
+  <sql id="Base_Column_List" >
+    id, addressId, note, sum, state, createTime, userId
+  </sql>
   <!-- 连表查询-->
   <resultMap id="BaseResultMap" type="OrderForm" >
     <id column="id" property="id" jdbcType="VARCHAR" />
@@ -14,6 +17,7 @@
     <collection property="goodsList" javaType="ArrayList" ofType="ShoppingCarToGoods"
                 column="id" select="selectShoppingCarToGoods"></collection>
   </resultMap>
+
   <!-- 返回ShoppingCarToGoods-->
   <resultMap id="ShoppingCarToGoodsMap" type="ShoppingCarToGoods" >
     <id column="id" property="id" jdbcType="VARCHAR"></id>
@@ -34,7 +38,7 @@
   <select id="getGoods" resultType="ShoppingCarGoods" parameterType="java.lang.String" >
     select
     g.id,g.name,g.brand,g.factory,g.storage,g.shelfLife,g.remarks,g.state,p.picture
-    from tb_goods as g  join (SELECT goodsId,max(address) as picture from tb_goods_picture group by goodsId) as p
+    from tb_goods as g  join (SELECT goodsId,address as picture from tb_goods_picture group by goodsId) as p
     on g.id = #{goodsId,jdbcType=VARCHAR} and p.goodsId=g.id
   </select>
   <select id="getAddress" resultType="Address">
@@ -49,9 +53,6 @@
     from tb_order_form_goods
     where formId=#{id}
   </select>
-  <sql id="Base_Column_List" >
-    id, addressId, note, sum, state, createTime, userId
-  </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
@@ -70,9 +71,9 @@
   </select>
   <insert id="insert" parameterType="map" >
     insert into tb_order_form (id, addressId, note,
-      sum, state, createTime, userId,cityId)
+      sum, state, createTime, userId,cityId,username)
     values (#{id,jdbcType=VARCHAR}, #{addressId,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR}, 
-      #{sum,jdbcType=FLOAT}, #{state,jdbcType=INTEGER}, CURDATE(), #{userId,jdbcType=VARCHAR},#{cityId,jdbcType=VARCHAR})
+      #{sum,jdbcType=FLOAT}, #{state,jdbcType=INTEGER}, CURDATE(), #{userId,jdbcType=VARCHAR},#{cityId,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR})
   </insert>
 <!--  <insert id="insertOrderFormGoods" parameterType="map" >
     insert into tb_order_form_goods (id, goodsId,num,priceId,formId)
@@ -95,7 +96,7 @@
   </update>
   <insert id="insertOrderFormGoods" parameterType="java.util.List">
     insert into tb_order_form_goods
-    (id, goodsId, num, priceId,formId)
+    (goodsId, num, priceId,formId)
     values
     <foreach collection ="list" item="shoppingCarGoodsForUpdate" index= "index" separator =",">
       (

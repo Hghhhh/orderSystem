@@ -1,39 +1,155 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.yidong.mapper.CommentMapper" >
-  <resultMap id="BaseResultMap" type="Comment" >
-  <id column="id" property="id" jdbcType="VARCHAR" />
-  <result column="star" property="star" jdbcType="INTEGER" />
-  <result column="comment" property="comment" jdbcType="VARCHAR" />
-  <result column="goodsId" property="goodsId" jdbcType="VARCHAR"/>
-    <result column="createTime" property="createTime" jdbcType="VARCHAR"/>
-    <result column="state" property="state" jdbcType="INTEGER"/>
-  <association property="user" column="userId" select="getUser">
-  </association>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yidong.mapper.CommentMapper">
+  <resultMap id="BaseResultMap" type="com.yidong.model.Comment">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="star" jdbcType="INTEGER" property="star" />
+    <result column="comment" jdbcType="VARCHAR" property="comment" />
+    <result column="userId" jdbcType="VARCHAR" property="userid" />
+    <result column="goodsId" jdbcType="VARCHAR" property="goodsid" />
+    <result column="createTime" jdbcType="DATE" property="createtime" />
+    <result column="state" jdbcType="INTEGER" property="state" />
   </resultMap>
-  <select id="getUser" resultType="User" parameterType="java.lang.String" >
-    select id,account,name from tb_user where id=#{userId,jdbcType=VARCHAR}
-  </select>
-  <sql id="Base_Column_List" >
-    id, star, comment, userId,goodsId,createTime,state
+  <sql id="Base_Column_List">
+    id, star, comment, userId, goodsId, createTime, state
   </sql>
-  <select id="selectByGoodsId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_comment
-    where goodsId = #{goodsId,jdbcType=VARCHAR} and state != 3 and star &gt;= 4
+    where id = #{id,jdbcType=VARCHAR}
   </select>
-  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from tb_comment
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yidong.model.Comment">
+    insert into tb_comment (id, star, comment, 
+      userId, goodsId, createTime, 
+      state)
+    values (#{id,jdbcType=VARCHAR}, #{star,jdbcType=INTEGER}, #{comment,jdbcType=VARCHAR}, 
+      #{userid,jdbcType=VARCHAR}, #{goodsid,jdbcType=VARCHAR}, #{createtime,jdbcType=DATE}, 
+      #{state,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yidong.model.Comment">
+    insert into tb_comment
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="star != null">
+        star,
+      </if>
+      <if test="comment != null">
+        comment,
+      </if>
+      <if test="userid != null">
+        userId,
+      </if>
+      <if test="goodsid != null">
+        goodsId,
+      </if>
+      <if test="createtime != null">
+        createTime,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="star != null">
+        #{star,jdbcType=INTEGER},
+      </if>
+      <if test="comment != null">
+        #{comment,jdbcType=VARCHAR},
+      </if>
+      <if test="userid != null">
+        #{userid,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsid != null">
+        #{goodsid,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=DATE},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yidong.model.Comment">
+    update tb_comment
+    <set>
+      <if test="star != null">
+        star = #{star,jdbcType=INTEGER},
+      </if>
+      <if test="comment != null">
+        comment = #{comment,jdbcType=VARCHAR},
+      </if>
+      <if test="userid != null">
+        userId = #{userid,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsid != null">
+        goodsId = #{goodsid,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        createTime = #{createtime,jdbcType=DATE},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yidong.model.Comment">
+    update tb_comment
+    set star = #{star,jdbcType=INTEGER},
+      comment = #{comment,jdbcType=VARCHAR},
+      userId = #{userid,jdbcType=VARCHAR},
+      goodsId = #{goodsid,jdbcType=VARCHAR},
+      createTime = #{createtime,jdbcType=DATE},
+      state = #{state,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <resultMap id="BaseResultMap" type="Comment">
+  <id column="id" jdbcType="VARCHAR" property="id" />
+  <result column="star" jdbcType="INTEGER" property="star" />
+  <result column="comment" jdbcType="VARCHAR" property="comment" />
+  <result column="goodsId" jdbcType="VARCHAR" property="goodsId" />
+    <result column="createTime" jdbcType="VARCHAR" property="createTime" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+  <association column="userId" property="user" select="getUser">
+  </association>
+  </resultMap>
+  <select id="getUser" parameterType="java.lang.String" resultType="User">
+    select id,account,name from tb_user where id = #{id}
+  </select>
+  <select id="getUserId" parameterType="java.lang.String" resultType="java.lang.String">
+    SELECT id from tb_user where account=#{account}
+  </select>
+  <sql id="Base_Column_List">
+    id, star, comment, userId,goodsId,createTime,state
+  </sql>
+  <select id="selectByGoodsId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_comment
+    where goodsId = #{goodsId,jdbcType=VARCHAR}  and star &gt;= 4
+  </select>
+  <select id="selectByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from tb_comment
     where userId = #{userId,jdbcType=VARCHAR}  and state != 3
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from tb_comment
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" parameterType="map" >
+  <insert id="insert" parameterType="map">
     insert into tb_comment (id, star, comment, 
       userId, goodsId,createTime)
     values (#{id,jdbcType=VARCHAR}, #{star,jdbcType=INTEGER}, #{comment,jdbcType=VARCHAR}, 

@@ -9,7 +9,7 @@ public interface CommentService {
     boolean deleteByPrimaryKey(String id);
 
     boolean insert(int star,String comment,
-                        String  userId,String goodsId);
+                        String  account,String goodsId);
 
     List<Comment> selectByGoodsId(String goodsId);
 

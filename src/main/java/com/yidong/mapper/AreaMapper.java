@@ -7,4 +7,7 @@ import java.util.List;
 public interface AreaMapper {
 
     List<Area> selectArea();
+
+    String selectCityName(String id);
+
 }

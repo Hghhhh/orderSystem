@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface SmallTypeMapper {
 
-    List<SmallType> selectSmallType(String bigTypeId);
+    List<SmallType> selectSmallType(int bigTypeId);
 
 }

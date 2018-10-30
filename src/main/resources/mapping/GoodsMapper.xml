@@ -29,7 +29,7 @@
     select 
     <include refid="Base_Column_List" />
     from tb_goods
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR} and state!=0
   </select>
   <select id="selectByName" resultMap="BaseResultMap" parameterType="map" >
     select
@@ -44,17 +44,17 @@
     select
     <include refid="Base_Column_List" />
     from tb_goods
-    where state = #{state,jdbcType=INTEGER}
+    where state = #{state,jdbcType=INTEGER}  and state!=0
     <if test="cityId != null">
       and cityId = #{cityId,jdbcType=VARCHAR}
     </if>
     limit #{num,jdbcType=INTEGER},6
   </select>
-  <select id="selectByType" resultMap="BaseResultMap" parameterType="java.lang.String">
+  <select id="selectByType" resultMap="BaseResultMap" parameterType="map">
     SELECT
     <include refid="Base_Column_List" />
     from tb_goods
-    where id in (SELECT goodsId  from tb_goods_type as id where typeId = #{typeId})
+    where id in (SELECT goodsId  from tb_goods_type as id where typeId = #{typeId,jdbcType=INTEGER})  and state!=0
     <if test="cityId != null">
       and cityId = #{cityId,jdbcType=VARCHAR}
     </if>

@@ -2,16 +2,16 @@ package com.yidong.mapper;
 
 import com.yidong.model.Comment;
 
-import java.util.List;
-import java.util.Map;
-
 public interface CommentMapper {
     int deleteByPrimaryKey(String id);
 
-    int insert(Map map);
+    int insert(Comment record);
 
-    List<Comment> selectByGoodsId(String goodsId);
+    int insertSelective(Comment record);
 
-    List<Comment> selectByUserId(String userId);
+    Comment selectByPrimaryKey(String id);
 
+    int updateByPrimaryKeySelective(Comment record);
+
+    int updateByPrimaryKey(Comment record);
 }

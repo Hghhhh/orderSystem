@@ -5,5 +5,5 @@ import com.yidong.model.SmallType;
 import java.util.List;
 
 public interface SmallTypeService {
-    List<SmallType> selectSmallType(String bigTypeId);
+    List<SmallType> selectSmallType(int bigTypeId);
 }

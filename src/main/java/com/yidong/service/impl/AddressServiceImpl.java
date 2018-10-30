@@ -14,7 +14,6 @@ public class AddressServiceImpl implements AddressService {
     @Autowired
     private AddressMapper addressMapper;
 
-    @Transactional
     @Override
     public boolean deleteByPrimaryKey(String id) {
         Address address = addressMapper.selectByPrimaryKey(id);
@@ -52,7 +51,6 @@ public class AddressServiceImpl implements AddressService {
         return record;
     }
 
-    @Transactional
     @Override
     public boolean insert(String account, String userName, String userPhone, String address) {
         Address record = getRecord(account,userName,userPhone,address);
@@ -76,7 +74,6 @@ public class AddressServiceImpl implements AddressService {
     }
 
 
-    @Transactional
     @Override
     public boolean updateByPrimaryKey(String addressId,String account, String userName, String userPhone, String address) {
         Address record = getRecord(account,userName,userPhone,address);
@@ -84,7 +81,6 @@ public class AddressServiceImpl implements AddressService {
         return addressMapper.updateByPrimaryKeySelective(record)==1?true:false;
     }
 
-    @Transactional
     @Override
     public boolean setDefaultState(String account, String addressId) {
         addressMapper.updateState(account);//把所有地址的state设为1

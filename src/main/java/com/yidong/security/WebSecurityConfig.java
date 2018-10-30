@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)//开启注解声明权限
+@EnableGlobalMethodSecurity(prePostEnabled = true)//开启注解声明权限，可以在controller中用@PreAuthorize注解设置权限
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     // Spring会自动寻找同样类型的具体类注入，这里就是JwtUserDetailsServiceImpl了
@@ -74,7 +74,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 基于token，所以不需要session
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-
                 .antMatchers("/login").permitAll()
                 .antMatchers("/register").permitAll()
                 .antMatchers("/selectOneGoods").permitAll()
@@ -91,9 +90,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/selectCommentByGoodsId").permitAll()
                 .antMatchers("/wxLogin").permitAll()
                 .antMatchers("/wxNotify").permitAll()
-                //除了登录和注册页面不用权限外，其他都需要权限认证
+                //除了以上路径不用权限外，其他都需要权限认证
                 .anyRequest().authenticated();
-        //配置jwt的filter
+        //配置jwt的filter，before UsernamePasswordAuthenticationFilter.class
         httpSecurity
                 .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
         // 禁用缓存

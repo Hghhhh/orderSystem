@@ -14,9 +14,10 @@ public class Goods {
     private String storage;
 
     private String shelfLife;
+
     private String remarks;
 
-    private Integer cityId;
+    private String cityId;
 
 
     private Integer state;
@@ -24,11 +25,6 @@ public class Goods {
     private List<Price> price;
 
     private List<String> pictures;
-
-    public Goods() {
-    }
-
-
 
     public String getName() {
         return name;
@@ -45,16 +41,6 @@ public class Goods {
     public void setId(String id) {
         this.id = id;
     }
-
-    public Integer getCityId() {
-        return cityId;
-    }
-
-    public void setCityId(Integer cityId) {
-        this.cityId = cityId;
-    }
-
-
 
     public Integer getState() {
         return state;
@@ -118,5 +104,13 @@ public class Goods {
 
     public void setRemarks(String remarks) {
         this.remarks = remarks;
+    }
+
+    public String getCityId() {
+        return cityId;
+    }
+
+    public void setCityId(String cityId) {
+        this.cityId = cityId;
     }
 }

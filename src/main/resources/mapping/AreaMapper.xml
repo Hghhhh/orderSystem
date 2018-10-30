@@ -8,4 +8,10 @@
     from tb_area
   </select>
 
+  <select id="selectCityName" resultType="java.lang.String" parameterType="java.lang.String">
+    SELECT
+    city from tb_area
+    where id=#{id}
+  </select>
+
 </mapper>

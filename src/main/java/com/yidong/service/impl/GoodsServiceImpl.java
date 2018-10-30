@@ -81,7 +81,7 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public List<Goods> selectByType(int num, String typeId, String cityId,String account) {
+    public List<Goods> selectByType(int num, int typeId, String cityId,String account) {
         Map map = new HashMap();
         map.put("num",num);
         map.put("typeId",typeId);

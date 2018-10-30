@@ -7,6 +7,7 @@ import com.yidong.service.OrderFormService;
 import com.yidong.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,10 +35,25 @@ public class OrderFormController {
     }
 
     @RequestMapping(value="/createOrderForm")
-    public String insert(@RequestBody String orderFormForAdd,HttpServletRequest request) {
+    public ResponseEntity<String> insert(@RequestBody String orderFormForAdd, HttpServletRequest request) {
         OrderFormForAdd offa = JsonUtil.parseJsonWithGson(orderFormForAdd,OrderFormForAdd.class);
-        return orderFormService.insert(offa.getAddressId(),offa.getNote(),offa.getSum(),(String)request.getAttribute("account"),
+        String orderFormId = orderFormService.insert(offa.getAddressId(),offa.getNote(),offa.getSum(),(String)request.getAttribute("account"),
                 offa.getCityId(),offa.getShoppingCarGoodsForUpdates());
+        if(orderFormId!=null){
+            if(orderFormId.equals("no goods")){
+                return ResponseEntity.status(401).body(null);
+            }
+            else if(orderFormId.equals("not enough goods")){
+                return ResponseEntity.status(402).body(null);
+            }
+            else if(orderFormId.equals("goods is out")){
+                return ResponseEntity.status(403).body(null);
+            }
+            else return ResponseEntity.ok(orderFormId);
+        }
+        else{
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @RequestMapping(value="/updateOrderForm")

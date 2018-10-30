@@ -1,20 +1,20 @@
 package com.yidong.model;
 
 public class SmallType {
-    private String id;
+    private int id;
 
     private String name;
 
-    private String bigTypeId;
+    private int bigTypeId;
 
     private String img;
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id == null ? null : id.trim();
+    public void setId(int id) {
+        this.id = id ;
     }
 
     public String getName() {
@@ -25,13 +25,6 @@ public class SmallType {
         this.name = name == null ? null : name.trim();
     }
 
-    public String getBigTypeId() {
-        return bigTypeId;
-    }
-
-    public void setBigTypeId(String bigTypeId) {
-        this.bigTypeId = bigTypeId == null ? null : bigTypeId.trim();
-    }
 
     public String getImg() {
         return img;
@@ -39,5 +32,13 @@ public class SmallType {
 
     public void setImg(String img) {
         this.img = img;
+    }
+
+    public int getBigTypeId() {
+        return bigTypeId;
+    }
+
+    public void setBigTypeId(int bigTypeId) {
+        this.bigTypeId = bigTypeId;
     }
 }

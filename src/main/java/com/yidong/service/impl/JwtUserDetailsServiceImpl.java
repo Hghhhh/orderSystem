@@ -27,6 +27,5 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
         } else {
             return  JwtUserFactory.create(user);
         }
-
     }
 }

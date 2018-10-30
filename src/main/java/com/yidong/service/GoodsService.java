@@ -13,6 +13,6 @@ public interface GoodsService {
 
     List<Goods> selectByState(int num, int state,String cityId,String account);
 
-    List<Goods> selectByType(int num, String typeId,String cityId,String account);
+    List<Goods> selectByType(int num, int typeId,String cityId,String account);
 
 }

@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 
+import com.yidong.config.WxPayConfig;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -33,8 +34,8 @@ public class PayUtil {
      * @return 签名结果
      */
     public static boolean verify(String text, String sign, String key, String input_charset) {
-        text = text + key;
-        String mysign = DigestUtils.md5Hex(getContentBytes(text, input_charset));
+        String mysign =sign(text,key,input_charset).toUpperCase();
+        System.out.println("mysign: "+mysign);
         if (mysign.equals(sign)) {
             return true;
         } else {
@@ -121,9 +122,9 @@ public class PayUtil {
      * @param requestMethod 请求方法
      * @param outputStr 参数
      */
-    public static String httpRequest(String requestUrl,String requestMethod,String outputStr){
+    public static Map httpRequest(String requestUrl,String requestMethod,String outputStr) throws Exception {
         // 创建SSLContext
-        StringBuffer buffer = null;
+        String buffer = null;
         try{
             URL url = new URL(requestUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -140,18 +141,33 @@ public class PayUtil {
             // 读取服务器端返回的内容
             InputStream is = conn.getInputStream();
             InputStreamReader isr = new InputStreamReader(is, "utf-8");
-            BufferedReader br = new BufferedReader(isr);
-            buffer = new StringBuffer();
-            String line = null;
-            while ((line = br.readLine()) != null) {
-                buffer.append(line);
-            }
-            br.close();
+            buffer = readFormServer(isr);
         }catch(Exception e){
             e.printStackTrace();
         }
+        return doXMLParse(buffer);
+    }
+
+    public static String readFormServer(InputStreamReader isr) {
+        BufferedReader br = new BufferedReader(isr);
+        StringBuffer buffer = new StringBuffer();
+        String line = null;
+        try{
+            while ((line = br.readLine()) != null) {
+                buffer.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                br.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         return buffer.toString();
     }
+
     public static String urlEncodeUTF8(String source){
         String result=source;
         try {
@@ -225,7 +241,8 @@ public class PayUtil {
 
         return sb.toString();
     }
-    public static InputStream String2Inputstream(String str) {
-        return new ByteArrayInputStream(str.getBytes());
+    public static InputStream String2Inputstream(String str) throws UnsupportedEncodingException {
+        return new ByteArrayInputStream(str.getBytes("utf-8"));
     }
+
 }

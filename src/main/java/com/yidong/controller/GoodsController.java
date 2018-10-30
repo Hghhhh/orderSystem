@@ -36,7 +36,7 @@ public class GoodsController {
 
     @RequestMapping(value="/selectTypeGoods")
     public List<Goods> selectByType(@RequestParam String typeId,@RequestParam int num,String cityId, HttpServletRequest request){
-        return goodsService.selectByType(num,typeId,cityId,(String) request.getAttribute("account"));
+        return goodsService.selectByType(num,Integer.parseInt(typeId),cityId,(String) request.getAttribute("account"));
     }
 
 

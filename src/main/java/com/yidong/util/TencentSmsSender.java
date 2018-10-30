@@ -10,15 +10,15 @@ import java.util.Random;
 public class TencentSmsSender {
 
     // 短信应用SDK AppID
-    private static final int appid = 1400109321; // 1400开头
+    private static final int appid = 1400122024; // 1400开头
 
     // 短信应用SDK AppKey
-    private static final  String appkey = "1babef9af482c2391fa806ff446058da";
+    private static final  String appkey = "86dbf88cc0abd417897ea9987eb9cb8f";
 
     // 签名
-    private static final  String smsSign = "黄国航学习生活记录本";
+    private static final  String smsSign = "东兴隆冻品会";
 
-    private static final int templateId = 151356;
+    private static final int templateId = 171182;
     public static String sendMessage(String  phoneNumber){
         try {
             String[] params = {""};

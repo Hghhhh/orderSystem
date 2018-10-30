@@ -51,46 +51,6 @@
     values (#{id,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{userPhone,jdbcType=VARCHAR}, 
       #{address,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR},#{state,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="Address" >
-    insert into tb_address
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
-      <if test="userName != null" >
-        userName,
-      </if>
-      <if test="userPhone != null" >
-        userPhone,
-      </if>
-      <if test="address != null" >
-        address,
-      </if>
-      <if test="userId != null" >
-        userId,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=VARCHAR},
-      </if>
-      <if test="userName != null" >
-        #{userName,jdbcType=VARCHAR},
-      </if>
-      <if test="userPhone != null" >
-        #{userPhone,jdbcType=VARCHAR},
-      </if>
-      <if test="address != null" >
-        #{address,jdbcType=VARCHAR},
-      </if>
-      <if test="userId != null" >
-        #{userId,jdbcType=VARCHAR},
-      </if>
-      <if test="state!=null">
-        #{state,jdbcType=INTEGER}
-      </if>
-    </trim>
-  </insert>
   <update id="updateByPrimaryKeySelective" parameterType="Address" >
     update tb_address
     <set >
@@ -106,13 +66,7 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="Address" >
-    update tb_address
-    set userName = #{userName,jdbcType=VARCHAR},
-      userPhone = #{userPhone,jdbcType=VARCHAR},
-      address = #{address,jdbcType=VARCHAR},
-    where id = #{id,jdbcType=VARCHAR}
-  </update>
+
   <update id="updateState" parameterType="java.lang.String">
     UPDATE tb_address
     set state = 1

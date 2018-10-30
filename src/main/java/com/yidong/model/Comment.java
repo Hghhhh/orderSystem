@@ -1,22 +1,21 @@
 package com.yidong.model;
 
+import java.util.Date;
+
 public class Comment {
-
-
     private String id;
 
     private Integer star;
 
     private String comment;
 
-    private String goodsId;
+    private String userid;
 
-    private User user;
+    private String goodsid;
 
-    private int state;
+    private Date createtime;
 
-    private String createTime;
-
+    private Integer state;
 
     public String getId() {
         return id;
@@ -42,35 +41,35 @@ public class Comment {
         this.comment = comment == null ? null : comment.trim();
     }
 
-    public User getUser() {
-        return user;
+    public String getUserid() {
+        return userid;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserid(String userid) {
+        this.userid = userid == null ? null : userid.trim();
     }
 
-    public String getGoodsId() {
-        return goodsId;
+    public String getGoodsid() {
+        return goodsid;
     }
 
-    public void setGoodsId(String goodsId) {
-        this.goodsId = goodsId;
+    public void setGoodsid(String goodsid) {
+        this.goodsid = goodsid == null ? null : goodsid.trim();
     }
 
-    public String getCreateTime() {
-        return createTime;
+    public Date getCreatetime() {
+        return createtime;
     }
 
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
+    public void setCreatetime(Date createtime) {
+        this.createtime = createtime;
     }
 
-    public int getState() {
+    public Integer getState() {
         return state;
     }
 
-    public void setState(int state) {
+    public void setState(Integer state) {
         this.state = state;
     }
 }

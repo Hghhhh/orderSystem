@@ -18,16 +18,15 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     private CommentMapper commentMapper;
 
-    @Transactional
     @Override
     public boolean deleteByPrimaryKey(String id) {
         return commentMapper.deleteByPrimaryKey(id)==0?false:true;
     }
 
-    @Transactional
     @Override
     public boolean insert(int star,String comment,
-                        String  userId,String goodsId) {
+                        String  account,String goodsId) {
+        String userId = commentMapper.getUserId(account);
         Map map = new HashMap();
         map.put("star",star);
         map.put("comment",comment);

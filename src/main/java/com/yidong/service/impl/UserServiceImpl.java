@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Map<String,String> login(String account, String password) {
-        //这一部分生成根据账号密码authentication放在SecurityContextHolder上下文中，用来验证密码
+        //这一部分生成根据账号密码authentication用来验证账号密码
         UsernamePasswordAuthenticationToken unAuthentication = new UsernamePasswordAuthenticationToken(account, password);//还未验证的认证
         final Authentication authentication = authenticationManager.authenticate(unAuthentication);//验证认证
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.selectByAccount(account)==null?false:true;
     }
 
-    @Transactional
+
     @Override
     public boolean insert(String account,String password,String name) {
         PasswordEncoder passwordEncoder = new MyPasswordEncoder();
@@ -112,7 +112,6 @@ public class UserServiceImpl implements UserService {
         map.put("userId",userId);
         userMapper.insertShoppingCar(map);
         return userMapper.insert(user)==1?true:false;
-
     }
 
     @Override
@@ -120,7 +119,6 @@ public class UserServiceImpl implements UserService {
         return userMapper.selectByPrimaryKey(id);
     }
 
-    @Transactional
     @Override
     public boolean updatePasswordByAccount(String account, String password) {
         Map<String,String> map = new HashMap<String,String>();

@@ -20,7 +20,7 @@
     <select id="getGoods" resultType="ShoppingCarGoods" parameterType="java.lang.String" >
         select
         g.id,g.name,g.brand,g.factory,g.storage,g.shelfLife,g.remarks,g.state,p.picture
-        from tb_goods as g join (SELECT goodsId,max(address) as picture from tb_goods_picture group by goodsId) as p
+        from tb_goods as g join (SELECT goodsId,address as picture from tb_goods_picture group by goodsId) as p
         on g.id = #{goodsId,jdbcType=VARCHAR} and p.goodsId=g.id
     </select>
  <!-- <resultMap id="ShoppingCarGoodsMap" type="ShoppingCarGoods" >

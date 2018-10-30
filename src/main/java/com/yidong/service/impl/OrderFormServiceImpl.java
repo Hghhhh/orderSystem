@@ -1,11 +1,7 @@
 package com.yidong.service.impl;
 
-import com.yidong.mapper.OrderFormMapper;
-import com.yidong.mapper.ShoppingCarMapper;
-import com.yidong.model.OrderForm;
-import com.yidong.model.Price;
-import com.yidong.model.ShoppingCarGoodsForUpdate;
-import com.yidong.model.ShoppingCarToGoods;
+import com.yidong.mapper.*;
+import com.yidong.model.*;
 import com.yidong.service.OrderFormService;
 import com.yidong.util.OrderFormId;
 import com.yidong.util.UUIDUtils;
@@ -22,7 +18,15 @@ import java.util.Map;
 public class OrderFormServiceImpl implements OrderFormService {
 
     @Autowired
+    private GoodsMapper goodsMapper;
+
+    @Autowired
     private OrderFormMapper orderFormMapper;
+    @Autowired
+    private AddressMapper addressMapper;
+
+    @Autowired
+    private AreaMapper areaMapper;
 
     @Autowired
     private ShoppingCarMapper shoppingCarMapper;
@@ -62,14 +66,31 @@ public class OrderFormServiceImpl implements OrderFormService {
 
     }
 
-    @Transactional
     @Override
     public String insert(String addressId, String note,
         Float sum,String account,String cityId,List<ShoppingCarGoodsForUpdate> shoppingCarGoodsForUpdates) {
-        String id = OrderFormId.gens(account);
+        for(ShoppingCarGoodsForUpdate s : shoppingCarGoodsForUpdates){
+            Goods goods = goodsMapper.selectByPrimaryKey(s.getGoodsId());
+            if(goods.getState()==0){
+                return "goods is out";
+                //订单中有商品已经下架
+            }
+        }
+        Address address = addressMapper.selectByPrimaryKey(addressId);
+        ///判断城市和订单收获地址是否匹配
+        if(!address.getAddress().contains(areaMapper.selectCityName(cityId))){
+            return null;
+        }
+        //判断订单里面有无商品
+        if(shoppingCarGoodsForUpdates==null||shoppingCarGoodsForUpdates.size()==0){
+            return "no goods";
+        }
+
+        String id = OrderFormId.gens(account);//生成订单id
         Map map = new HashMap();
         map.put("state",1);
         map.put("addressId",addressId);
+        map.put("name",addressMapper.selectByPrimaryKey(addressId).getUserName());
         map.put("note",note);
         map.put("sum",sum);
         String userId = orderFormMapper.getUserId(account);
@@ -80,10 +101,10 @@ public class OrderFormServiceImpl implements OrderFormService {
             s.setCarId(shoppingCarMapper.selectByUserId(account));
             //判断库存等操作
             Price price = orderFormMapper.getPrice(s.getPriceId());
-            int num = price.getNum()-s.getBuyNum();
+            int num = price.getNum()-s.getBuyNum();//库存减去购买数量
             if(num<0){
                 //库存不够
-               throw new RuntimeException("库存不够！");
+               return "not enough goods";
             }
             else{
                 Map updateMap = new HashMap();
@@ -104,7 +125,6 @@ public class OrderFormServiceImpl implements OrderFormService {
         return id;
     }
 
-    @Transactional
     @Override
     public boolean update(String id,int state) {
         if(state==5){

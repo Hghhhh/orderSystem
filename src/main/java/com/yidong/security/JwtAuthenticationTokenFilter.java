@@ -1,6 +1,6 @@
 package com.yidong.security;
 /**
- * 过滤器，将token中的用户信息生成authentication，放置在SecurityContextHolder上下文中
+ * javaweb过滤器，将token中的用户信息生成authentication，放置在SecurityContextHolder上下文中
  */
 
 import com.yidong.util.JwtTokenUtil;
@@ -48,7 +48,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith(tokenHead)) {
             final String authToken = authHeader.substring(tokenHead.length()); // The part after "Bearer "
             String account = jwtTokenUtil.getAccountFromToken(authToken);//从token中获得用户信息
-
             logger.info("checking authentication " + account);
 
             //获取到用户的账号不为空，获得权限认证authentication
@@ -63,7 +62,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                             request));
                     logger.info("authenticated user " + account + ", setting security context");
                     request.setAttribute("account",account);
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);//设置账户权限信息
                 }
             }
         }

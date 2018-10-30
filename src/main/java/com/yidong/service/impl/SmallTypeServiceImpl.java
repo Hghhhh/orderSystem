@@ -13,7 +13,7 @@ public class SmallTypeServiceImpl implements SmallTypeService {
     @Autowired
     private SmallTypeMapper smallTypeMapper;
     @Override
-    public List<SmallType> selectSmallType(String bigTypeId) {
+    public List<SmallType> selectSmallType(int bigTypeId) {
         return smallTypeMapper.selectSmallType(bigTypeId);
     }
 }

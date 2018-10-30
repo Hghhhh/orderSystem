@@ -12,4 +12,6 @@ public interface ShoppingCarService {
   List<ShoppingCarToGoods> getShoppingCar(String account);
 
   boolean updateShoppingCar(List<ShoppingCarGoodsForUpdate> shoppingCarGoodsForUpdates,String account);
+
+  void clearShoppingCarGoods(String account);
 }

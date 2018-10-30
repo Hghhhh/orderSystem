@@ -41,17 +41,21 @@ public class ShoppingCarController {
             Matcher m = p.matcher(shoppingCarGoodsForUpdates);
             String s = m.replaceAll("");
             if(s.equals("[]")){
-
+                //如果购物车为空，什么都不做
             }
             else{
+                //不为空，解析json
                 Gson gson = new Gson();
                 scgfus  = gson.fromJson(shoppingCarGoodsForUpdates, new TypeToken<List<ShoppingCarGoodsForUpdate>>() {}.getType());
+                /*List<ShoppingCarGoodsForUpdate> scgfus  = JsonUtil.parseJsonArrayWithGson(shoppingCarGoodsForUpdates, ShoppingCarGoodsForUpdate.class);
+                这里用泛型传会出错java.lang.ClassCastException: com.google.gson.internal.LinkedTreeMap cannot be cast to xxx，原因未知？所以使用上面的代码替换*/
+                //解析json。拿到list数组
             }
         }
-     //   List<ShoppingCarGoodsForUpdate> scgfus  = JsonUtil.parseJsonArrayWithGson(shoppingCarGoodsForUpdates, ShoppingCarGoodsForUpdate.class);
-        //这里用泛型传会出错java.lang.ClassCastException: com.google.gson.internal.LinkedTreeMap cannot be cast to xxx，原因未知？
-        //解析json。拿到list数组
         String account = (String) request.getAttribute("account");
+        //拿到用户的账号
+        shoppingCarService.clearShoppingCarGoods(account);
+        //修改购物车的策略为：清空购物车-》添加新的购物车商品，故这里清空购物车
         return shoppingCarService.updateShoppingCar(scgfus,account)==true?
               new ResponseEntity<Boolean>(true, HttpStatus.OK):
                new ResponseEntity<Boolean>(false,HttpStatus.INTERNAL_SERVER_ERROR);

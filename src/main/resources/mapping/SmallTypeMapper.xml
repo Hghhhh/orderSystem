@@ -10,7 +10,7 @@
   <sql id="Base_Column_List" >
     id, name,bigTypeId,img
   </sql>
-  <select id="selectSmallType" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="selectSmallType" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from tb_small_type

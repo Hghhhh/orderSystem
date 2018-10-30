@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +43,7 @@ public class JwtTokenUtil implements Serializable {
             final Claims claims = getClaimsFromToken(token);
             account = claims.getSubject();
         } catch (Exception e) {
+            e.printStackTrace();
             account = null;
         }
         return account;
@@ -92,6 +94,7 @@ public class JwtTokenUtil implements Serializable {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (Exception e) {
+            e.printStackTrace();
             claims = null;
         }
         return claims;
@@ -102,7 +105,15 @@ public class JwtTokenUtil implements Serializable {
      * @return
      */
     private Date generateExpirationDate() {
-        return new Date(System.currentTimeMillis() + expiration * 1000);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date d  = null;
+        //这里会有一个异常，所以要用try catch捕获异常
+        try {
+            d  = sdf.parse("3017-11-06");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return d;
     }
 
     /**
