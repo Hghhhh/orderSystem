@@ -1,17 +1,17 @@
-﻿package com.yidong.config;
+package com.yidong.config;
 
 public class WxPayConfig {
     //小程序appid
-    public static final String appid = "";
+    public static final String appid = "wx86afcb7df200ad91";
     //微信小程序密钥
-    public static final String secret = "12312332";
+    public static final String secret = "a71fb1f0643b7399768b335a6882a96a";
     //微信支付的商户id
-    public static final String mch_id = "";
+    public static final String mch_id = "1510906771";
     //微信支付的商户密钥
-    public static final String key = "";
+    public static final String key = "4878413d676a4bac9f6e45811081618e";
 
     //支付成功后的服务器回调url
-    public static final String notify_url = "https://guohanghuang.cn:8443/wxNotify";
+    public static final String notify_url = "https://www.dongpinhui.xyz:8443/wxNotify";
     //签名方式
     public static final String SIGNTYPE = "MD5";
     //交易类型
